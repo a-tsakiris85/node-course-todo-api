@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 
 const {mongoose} = require('./db/mongoose') //can leave off .js
 const {Todo} = require('./models/todo');
-const {User} = require('./models/user'); 
+const {User} = require('./models/user');
 
 var app = express(); //creates the app
 
@@ -25,6 +25,14 @@ app.post('/todos', (req, res) => {
 
 app.listen(3000, () => { //local port, or we can do Heroku
   console.log("Started on port 3000");
+});
+
+app.get('/todos', (req,res) => {
+  Todo.find().then((todos) => {
+    res.send({todos}); //using an object is more flexible.
+  }, (err) => {
+    res.status(400).send(err);
+  });
 });
 
 module.exports = {
