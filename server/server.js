@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const {ObjectID} = require('mongodb');
 
 const {mongoose} = require('./db/mongoose') //can leave off .js
 const {Todo} = require('./models/todo');
@@ -23,9 +24,7 @@ app.post('/todos', (req, res) => {
   });
 });
 
-app.listen(3000, () => { //local port, or we can do Heroku
-  console.log("Started on port 3000");
-});
+
 
 app.get('/todos', (req,res) => {
   Todo.find().then((todos) => {
@@ -33,6 +32,28 @@ app.get('/todos', (req,res) => {
   }, (err) => {
     res.status(400).send(err);
   });
+});
+
+//fetching a variable based on URL
+app.get('/todos/:id', (req, res) => {
+  let id = req.params.id;
+  if(!ObjectID.isValid(id)) {
+    return res.status(404).send(); //the id is not valid.
+  }
+  else {
+    Todo.findById(id).then((todo) => {
+      if(!todo) {
+        return res.status(404).send();
+      }
+      res.send({todo});
+    }, (err) => {
+      res.status(400).send();
+    });
+  }
+})
+
+app.listen(3000, () => { //local port, or we can do Heroku
+  console.log("Started on port 3000");
 });
 
 module.exports = {

@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 //anonymous schema
-let User = mongoose.model('Model', { //automatically turns Name -> names collection
+let User = mongoose.model('User', { //automatically turns Name -> names collection
   email: {
     type: String,
     required: true,
@@ -9,6 +9,10 @@ let User = mongoose.model('Model', { //automatically turns Name -> names collect
     trim: true
   }
 });
+
+// let a = new User({email: "andrew@example.com"});
+//
+// a.save().then((doc) => console.log('done'));
 
 module.exports = {
   User
