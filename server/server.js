@@ -7,7 +7,7 @@ const {Todo} = require('./models/todo');
 const {User} = require('./models/user');
 
 var app = express(); //creates the app
-
+const port = process.env.PORT || 3000;
 //middleware
 app.use(bodyParser.json()); //returns a function that express will use
 
@@ -52,8 +52,8 @@ app.get('/todos/:id', (req, res) => {
   }
 })
 
-app.listen(3000, () => { //local port, or we can do Heroku
-  console.log("Started on port 3000");
+app.listen(port, () => { //local port, or we can do Heroku
+  console.log("Started on port ", port;
 });
 
 module.exports = {

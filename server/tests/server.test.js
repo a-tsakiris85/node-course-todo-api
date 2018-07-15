@@ -4,9 +4,11 @@ const request = require('supertest');
 const {app} = require('./../server'); //to go backwards!
 const {Todo} = require('./../models/todo');
 
+const {ObjectID} = require('mongodb');
+
 const test_todos = [
-  {text: "first test todo"},
-  {text: "second test todo"},
+  {text: "first test todo", _id: new ObjectID()},
+  {text: "second test todo", _id: new ObjectID()},
   {text: "third test todo"}
 ];
 
@@ -16,6 +18,22 @@ beforeEach((done) => {
   }).then(() => done());
 });
 
+describe('GET /todos:id', () => {
+  it('should get a todo by id', (done) => {
+    request(app).get(`/todos/${test_todos[0]._id.toHexString()}`)
+    .expect(200)
+    .expect((res) => {
+      expect(res.body.todo.text).toBe(test_todos[0].text);
+    }).end(done);
+  });
+  it('should return 404 if bad id', (done) => {
+    request(app).get('/todos/23u234').expect(404).end(done);
+  });
+  it('should not find an id that does not exist', (done) => {
+    request(app).get(`/todos/${new ObjectID().toHexString()}`).expect(404)
+    .end(done);
+  })
+})
 describe('GET /todos', () => {
   it('should get all todos', (done) => {
     request(app).get('/todos').expect(200).expect((res) => {
