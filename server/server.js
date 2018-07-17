@@ -1,3 +1,5 @@
+require('./config/config.js');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
@@ -8,7 +10,7 @@ const {Todo} = require('./models/todo');
 const {User} = require('./models/user');
 
 var app = express(); //creates the app
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 //middleware
 app.use(bodyParser.json()); //returns a function that express will use
 
@@ -73,7 +75,7 @@ app.delete('/todos/:id', (req, res) => {
 app.patch('/todos/:id', (req, res) => {
   let id = req.params.id;
   const body = _.pick(req.body, ['text', 'completed']);
-  
+
   if(!ObjectID.isValid(id)) {
     return res.status(404).send();
   }
