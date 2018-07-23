@@ -95,6 +95,19 @@ app.patch('/todos/:id', (req, res) => {
     }
   }).catch((e) => res.status(400).send());
 });
+
+//signing in
+app.post("/users", (req,res) => {
+  var body = _.pick(req.body, ['email', 'password'])
+  var user = new User(body);
+  user.save().then(() => {
+    return user.generateAuthToken(); //returns a promise
+  }).then((token) => { //x hyphen is a custom header
+    res.header('x-auth', token).send(user);
+  }).catch((e) => {
+    res.status(400).send(e);
+  });
+});
 app.listen(port, () => { //local port, or we can do Heroku
   console.log("Started on port ", port);
 });
