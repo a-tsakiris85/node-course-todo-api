@@ -1,4 +1,5 @@
 require('./config/config.js');
+const {authenticate} = require('./middleware/authenticate.js');
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -108,6 +109,16 @@ app.post("/users", (req,res) => {
     res.status(400).send(e);
   });
 });
+
+
+
+
+//private route
+app.get('/users/me', authenticate, (req, res) => {
+  res.send(req.user);
+});
+
+
 app.listen(port, () => { //local port, or we can do Heroku
   console.log("Started on port ", port);
 });
