@@ -45,6 +45,17 @@ UserSchema.methods.generateAuthToken = function () {
   });
 };
 
+UserSchema.methods.removeToken = function (token) {
+  var user = this;
+  return user.update({
+    $pull: { //mongodb operator
+      tokens: { //removes from tokens array
+        token: token //removes if token is the given token
+      }
+    }
+  });
+};
+
 //overriding so that not everything is sent back (we only want ID and email)
 UserSchema.methods.toJSON = function () {
   var user = this;
@@ -69,10 +80,26 @@ UserSchema.statics.findByToken = function (token) {
   });
 }
 
+UserSchema.statics.findByCredentials = function (email, password) {
+  var User = this;
+  return User.findOne({email}).then((user) => {
+    if(!user){
+      return Promise.reject();
+    }
+    return new Promise((resolve, reject) => {
+      bcrypt.compare(password, user.password, (err, res) => {
+        if(!res) {
+          reject();
+        }
+        resolve(user);
+      });
+    });
+
+  });
+}
 //called before save everytime.
 UserSchema.pre('save', function (next) {
   var user = this;
-
   if(user.isModified('password')) {
     bcrypt.genSalt(10, (err, salt) => {
       bcrypt.hash(user.password, salt, (err, hash) => {

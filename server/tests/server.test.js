@@ -3,20 +3,13 @@ const request = require('supertest');
 
 const {app} = require('./../server'); //to go backwards!
 const {Todo} = require('./../models/todo');
+const {populateTodos, test_todos, populateUsers} = require('./seed/seed.js');
 
 const {ObjectID} = require('mongodb');
 
-const test_todos = [
-  {text: "first test todo", _id: new ObjectID()},
-  {text: "second test todo", _id: new ObjectID()},
-  {text: "third test todo"}
-];
 
-beforeEach((done) => {
-  Todo.remove({}).then(() => {
-    return Todo.insertMany(test_todos);
-  }).then(() => done());
-});
+beforeEach(populateTodos);
+beforeEach(populateUsers);
 
 describe('GET /todos:id', () => {
   it('should get a todo by id', (done) => {
@@ -76,7 +69,7 @@ describe('POST /todos', () => {
           expect(todos.length).toBe(test_todos.length);
           done();
         }).catch((err) => {
-          done(e);
+          done(err);
         });
       });
   });
