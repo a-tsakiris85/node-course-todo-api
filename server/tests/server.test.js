@@ -1,3 +1,5 @@
+//this isn't gonna work cuz I skipped stuff.
+
 const expect = require('expect');
 const request = require('supertest');
 
@@ -38,7 +40,7 @@ describe('GET /todos', () => {
 describe('POST /todos', () => {
   it('should create new todo', (done) => { //mocha async
     let text = 'this is a test todo text';
-    request(app).post('/todos').send({text})
+    request(app).post('/todos').set(users[0].tokens[0].token).send({text})
       .expect(200) //assertion on the status code
       .expect((res) => {
         expect(res.body.text).toBe(text); //a custom assertion
@@ -59,7 +61,7 @@ describe('POST /todos', () => {
   });
 
   it('should not create new todo', (done) => {
-    request(app).post('/todos').send({})
+    request(app).post('/todos').set(users[0].tokens[0].token).send({})
       .expect(400)
       .end((err, res) => {
         if(err) {
